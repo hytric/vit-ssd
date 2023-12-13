@@ -135,10 +135,10 @@ def main():
     fix_seed(opt.random_seed)
 
     # wandb logging initialization
-    wandb.init(project=opt.prj_name, name=opt.exp_name, entity="yoojlee", config=vars(opt))
+    wandb.init(project=opt.prj_name, name=opt.exp_name, entity="tomato949", config=vars(opt))
 
     # device
-    device = f"cuda:{opt.gpu_id[0]}" if torch.cuda.is_available() else "cpu"
+    device = f"cuda:{opt.gpu_id}" if torch.cuda.is_available() else "cpu"
     print(device)
 
     # data loading

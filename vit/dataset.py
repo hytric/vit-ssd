@@ -7,6 +7,26 @@ from torch.utils.data import Dataset
 
 import time
 
+# def get_dataset(opt):
+#     # 데이터 경로 설정
+#     train_data_dir = '/Users/apple/PycharmProjects/vit-ssd/vit/banana-detection/bananas_train/images'  # 학습 데이터 디렉토리로 변경
+#     train_csv = '/Users/apple/PycharmProjects/vit-ssd/vit/banana-detection/bananas_train/label.csv'  # 학습 데이터 CSV 파일로 변경
+#
+#     val_data_dir = '/Users/apple/PycharmProjects/vit-ssd/vit/banana-detection/bananas_val/images'  # 검증 데이터 디렉토리로 변경
+#     val_csv = '/Users/apple/PycharmProjects/vit-ssd/vit/banana-detection/bananas_val/label.csv'  # 검증 데이터 CSV 파일로 변경
+#
+#     # 변환 함수 정의
+#     def transform(image, target):
+#         image = ToTensor()(image)
+#         boxes = target['boxes'] / torch.tensor([image.shape[2], image.shape[1], image.shape[2], image.shape[1]], dtype=torch.float32)
+#         labels = target['labels']
+#         return image, boxes, labels
+#
+#     # 데이터셋 로드
+#     train_data = CustomDataset(csv_file=train_csv, img_dir=train_data_dir, transform=transform)
+#     val_data = CustomDataset(csv_file=val_csv, img_dir=val_data_dir, transform=transform)
+#
+#     return train_data, val_data
 
 def make_patches(img:np.ndarray, p:int)->np.ndarray:
     """

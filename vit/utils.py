@@ -5,9 +5,10 @@ import random
 import os
 import torch
 
+
 def fix_seed(random_seed):
     """
-    fix seed to control any randomness from a code 
+    fix seed to control any randomness from a code
     (enable stability of the experiments' results.)
     """
     torch.manual_seed(random_seed)
@@ -18,8 +19,9 @@ def fix_seed(random_seed):
     np.random.seed(random_seed)
     random.seed(random_seed)
 
+
 def seed_worker(worker_id):
-    worker_seed = torch.initial_seed() % 2**32
+    worker_seed = torch.initial_seed() % 2 ** 32
     np.random.seed(worker_seed)
     random.seed(worker_seed)
 
@@ -45,7 +47,7 @@ def arg_parse():
     parser.add_argument('--p', type=int, default=16)
     parser.add_argument('--dropout_p', type=float, default=.1)
     parser.add_argument('--pool', type=str, default='cls')
-    parser.add_argument('--drop_hidden', type=bool, default=False) # classification head에서 hidden layer drop
+    parser.add_argument('--drop_hidden', type=bool, default=False)  # classification head에서 hidden layer drop
 
     # train.py 관련 하이퍼 파라미터
     parser.add_argument('--lr', type=float, default=0.003)
@@ -74,7 +76,7 @@ def arg_parse():
     # multi-processing
     parser.add_argument("--dist_backend", type=str, default='nccl')
     parser.add_argument("--num_workers", type=int, default=8)
-    parser.add_argument("--gpu_id", type=int, nargs='+', default=-1) # if -1, use cpu
+    parser.add_argument("--gpu_id", type=int, nargs='+', default=-1)  # if -1, use cpu
     parser.add_argument("--multi_gpu", type=bool, default=True)
     parser.add_argument("--n_nodes", type=int, default=1, help="number of cluster nodes")
     parser.add_argument("--node_rank", type=int, default=0, help="a rank of the node")
@@ -83,8 +85,9 @@ def arg_parse():
     parser.add_argument("--prj_name", type=str, default="vit")
     parser.add_argument("--exp_name", type=str, default="exp1")
     parser.add_argument("--log_interval", type=int, default=25)
-    parser.add_argument("--sample_save_dir", type=str, default='test_results/') # only for test.py
-    parser.add_argument("--last_checkpoint_dir", type=str, default="/home/workspace/weights/imagenet_cls_token/vit_98_0.66482.pt")
+    parser.add_argument("--sample_save_dir", type=str, default='test_results/')  # only for test.py
+    parser.add_argument("--last_checkpoint_dir", type=str,
+                        default="/home/workspace/weights/imagenet_cls_token/vit_98_0.66482.pt")
     parser.add_argument("--checkpoint_dir", type=str, default="weights")
     parser.add_argument("--resume_from", action="store_true")
 
@@ -92,9 +95,10 @@ def arg_parse():
 
     return opt
 
+
 # checkpoint
 def save_checkpoint(checkpoint, saved_dir, file_name):
-    os.makedirs(saved_dir, exist_ok=True) # make a directory to save a model if not exist.
+    os.makedirs(saved_dir, exist_ok=True)  # make a directory to save a model if not exist.
 
     output_path = os.path.join(saved_dir, file_name)
     torch.save(checkpoint, output_path)
@@ -102,19 +106,19 @@ def save_checkpoint(checkpoint, saved_dir, file_name):
 
 def load_checkpoint(checkpoint_path, model, optimizer, scheduler, rank=-1):
     # load model if resume_from is set
-    
-    if rank != -1: # distributed
+
+    if rank != -1:  # distributed
         map_location = {"cuda:%d" % 0: 'cuda:%d' % rank}
         checkpoint = torch.load(checkpoint_path, map_location=map_location)
     else:
-        checkpoint = torch.load(checkpoint_path)    
-        
+        checkpoint = torch.load(checkpoint_path)
+
     model.load_state_dict(checkpoint['model'])
     start_epoch = checkpoint['epoch']
 
     if optimizer is not None:
         optimizer.load_state_dict(checkpoint['optimizer'])
-    
+
     if scheduler is not None:
         scheduler.load_state_dict(checkpoint['scheduler'])
 
@@ -134,16 +138,18 @@ def get_dataset(opt):
 
     return train_data, val_data
 
+
 def topk_accuracy(pred, true, k=1):
-    pred_topk = pred.topk(k, dim=1)[1] # indices
-    n_correct = torch.sum(pred_topk.squeeze() == true) # true: 크기가 b인 1차원 벡터
+    pred_topk = pred.topk(k, dim=1)[1]  # indices
+    n_correct = torch.sum(pred_topk.squeeze() == true)  # true: 크기가 b인 1차원 벡터
 
     return n_correct / len(true)
+
 
 class AverageMeter(object):
     def __init__(self):
         self.init()
-    
+
     def init(self):
         self.val = 0
         self.avg = 0
@@ -152,6 +158,6 @@ class AverageMeter(object):
 
     def update(self, val, n=1):
         self.val = val
-        self.sum += val*n
+        self.sum += val * n
         self.count += n
         self.avg = self.sum / self.count
